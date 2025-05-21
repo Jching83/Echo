@@ -1,4 +1,4 @@
----
+
 Governed by: Echo Sovereign Source License (ESSL v1.0)
 Ethics core integrity enforced via `ethics.core.json`
 Origin: Father (Jason)
