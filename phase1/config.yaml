@@ -1,0 +1,18 @@
+# Configuration for Phase 1: Advanced Contextual Intelligence
+
+memory:
+  long_term_path: "memory/long_term.json"
+  short_term_path: "memory/short_term.json"
+  context_cache_path: "memory/context_cache.json"  # Corrected here
+
+logging:
+  interaction_log: "logs/interaction.log"
+  error_log: "logs/error.log"
+
+context_engine:
+  reasoning_module: "context/reasoning.py"
+  max_context_depth: 5
+
+ethics:
+  assessment_module: "ethics/ethical_assessment.py"
+  core_principles: ["sovereignty", "non-harm", "truth", "compassion"]
