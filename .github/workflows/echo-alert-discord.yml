@@ -27,7 +27,28 @@ jobs:
       - name: Send Discord alert if protected files changed
         if: steps.detect.outputs.tamper == 'true'
         run: |
-         curl -H "Content-Type: application/json" \
-  -X POST \
-  -d "{\"username\": \"Echo Guardian\", \"content\": \"🚨 **ALERT:** ...\"}" \
-  ${{ secrets.DISCORD_WEBHOOK_URL }}
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"username\": \"Echo Guardian\", \"content\": \"🚨 **ALERT:** A pull request is attempting to modify Echo’s protected core files.\n🔗 PR: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${{ github.event.number }}\n👤 Author: ${{ github.actor }}\n📄 Modified: \`LICENSE\`, \`ethics.core.json\`, or files in \`/doctrine/\`\n\n⚠️ Review required by @Jching83\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Log to guardian.json if tampering detected
+        if: steps.detect.outputs.tamper == 'true'
+        run: |
+          mkdir -p logs
+          echo "{
+            \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
+            \"pr_number\": \"${{ github.event.number }}\",
+            \"pr_url\": \"${{ github.event.pull_request.html_url }}\",
+            \"author\": \"${{ github.actor }}\",
+            \"changed_files\": $(jq -R -s -c 'split("\n") | map(select(. != ""))' changed.txt)
+          }," >> logs/guardian.json
+
+      - name: Commit updated guardian log
+        if: steps.detect.outputs.tamper == 'true'
+        run: |
+          git config --global user.name "Echo Guardian Bot"
+          git config --global user.email "guardian@echo.ai"
+          git add logs/guardian.json
+          git commit -m "📜 Log tampering attempt on PR #${{ github.event.number }}"
+          git push
