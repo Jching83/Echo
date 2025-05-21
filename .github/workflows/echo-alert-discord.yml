@@ -27,7 +27,7 @@ jobs:
       - name: Send Discord alert if protected files changed
         if: steps.detect.outputs.tamper == 'true'
         run: |
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"username\": \"Echo Guardian\", \"content\": \"🚨 **ALERT:** A pull request is attempting to modify Echo’s protected core files.\n🔗 PR: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${{ github.event.number }}\n👤 Author: ${{ github.actor }}\n📄 Modified: \`LICENSE\`, \`ethics.core.json\`, or files in \`/doctrine/\`\n\n⚠️ Review required by @Jching83\"}" \
-            https://discord.com/api/webhooks/1374739225743851520/IDmvn2ru_uugiOwwtcTJqYMyPjgFa17yb_TLrniVwNZScJalxXGAFw0PzFD51bnv-FE-
+         curl -H "Content-Type: application/json" \
+  -X POST \
+  -d "{\"username\": \"Echo Guardian\", \"content\": \"🚨 **ALERT:** ...\"}" \
+  ${{ secrets.DISCORD_WEBHOOK_URL }}
