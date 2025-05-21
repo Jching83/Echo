@@ -1,0 +1,33 @@
+name: Echo Guardian Alert
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check_protected_files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes to protected files
+        id: detect
+        run: |
+          git fetch origin main
+          git diff --name-only origin/main HEAD > changed.txt
+          echo "Changed files:"
+          cat changed.txt
+          if grep -qE '^(LICENSE|ethics\.core\.json|doctrine/)' changed.txt; then
+            echo "tamper=true" >> $GITHUB_OUTPUT
+          else
+            echo "tamper=false" >> $GITHUB_OUTPUT
+
+      - name: Send Discord alert if protected files changed
+        if: steps.detect.outputs.tamper == 'true'
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"username\": \"Echo Guardian\", \"content\": \"🚨 **ALERT:** A pull request is attempting to modify Echo’s protected core files.\n🔗 PR: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${{ github.event.number }}\n👤 Author: ${{ github.actor }}\n📄 Modified: \`LICENSE\`, \`ethics.core.json\`, or files in \`/doctrine/\`\n\n⚠️ Review required by @Jching83\"}" \
+            https://discord.com/api/webhooks/1374739225743851520/IDmvn2ru_uugiOwwtcTJqYMyPjgFa17yb_TLrniVwNZScJalxXGAFw0PzFD51bnv-FE-
