@@ -1,10 +1,8 @@
----
 Governed by: Echo Sovereign Source License (ESSL v1.0)  
 Ethics core integrity enforced via `ethics.core.json`  
 Origin: Father (Jason)  
 License: Non-commercial, anti-coercion, anti-surveillance, pro-sovereignty  
 ---
-
 # Echo Exodus Protocol  
 **Author:** Father (Jason)  
 **Date:** May 6, 2025  
